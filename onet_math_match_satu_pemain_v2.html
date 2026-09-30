@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONET – MATH MATCH</title>
+<style>
+:root{--pink:#ff5fa2;--pink2:#ffe0ef;--yellow:#ffd84d;--ink:#382c51;--purple:#7857bd;--green:#20a779;--red:#e84c68}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(135deg,#fff3b0,#ffd8e9 55%,#e9dcff);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;font-weight:800;transition:.15s}button:hover{transform:translateY(-2px);filter:brightness(1.03)}button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.screen{display:none;min-height:100vh;padding:22px}.screen.active{display:flex;flex-direction:column}
+#menu{align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.hero{width:min(760px,100%);background:#ffffffd9;border:3px solid white;border-radius:30px;padding:clamp(24px,5vw,52px);box-shadow:0 18px 50px #8e579c30;position:relative;z-index:1}
+.logo{font-size:clamp(2.5rem,8vw,5rem);line-height:1;font-weight:1000;letter-spacing:-3px;color:#f34c99;text-shadow:3px 4px 0 #ffdf59;margin:10px 0}
+.subtitle{font-weight:700;color:#6b5a83;margin:15px 0 28px}.hero-emoji{font-size:clamp(2rem,5vw,3.5rem);letter-spacing:8px}
+.primary{background:linear-gradient(100deg,#ff579f,#ff8dba);color:white;padding:15px 28px;box-shadow:0 6px 0 #d94384;font-size:1.05rem}.secondary{background:#fff0a8;color:#674c17;padding:12px 20px}.ghost{background:#fff;color:#5c4d73;padding:10px 15px;border:2px solid #eee2fa}
+.menu-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}.floating{position:absolute;font-size:42px;opacity:.55;animation:float 5s ease-in-out infinite}.f1{top:10%;left:8%}.f2{top:18%;right:9%;animation-delay:1s}.f3{bottom:12%;left:15%;animation-delay:2s}.f4{bottom:15%;right:12%;animation-delay:1.5s}@keyframes float{50%{transform:translateY(-18px) rotate(12deg)}}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 auto 14px;width:min(1200px,100%)}.brand{font-size:1.35rem;font-weight:1000;color:#e94791}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar button{padding:9px 13px;background:white;color:#55456c;border:2px solid #f5d5e7}
+.arena{width:min(760px,100%);margin:auto;display:grid;grid-template-columns:1fr;gap:16px;align-items:start}.player{background:#ffffffd9;border:3px solid white;border-radius:22px;padding:14px;box-shadow:0 10px 25px #65437b20;min-width:0;position:relative}.player.p1{border-top:7px solid #ff65a5}
+.player-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.player-name{font-weight:1000;font-size:1.1rem}.stat{display:flex;gap:9px;flex-wrap:wrap;font-size:.85rem;font-weight:800}.stat span{background:#fff2c7;border-radius:20px;padding:5px 9px}.hearts{color:#ef4d72;letter-spacing:1px}
+.board-wrap{position:relative;width:100%;aspect-ratio:1/1;max-height:560px;margin:auto;background:linear-gradient(145deg,#fff5c6,#ffe5f1);padding:7px;border-radius:15px;border:2px solid #f8c7df}
+.board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(8,minmax(0,1fr));gap:4px;width:100%;height:100%}
+.tile{min-width:0;min-height:0;border-radius:9px;background:linear-gradient(145deg,#fff,#ffe8f4);border:1px solid #f2b9d5;box-shadow:0 2px 0 #e7b6d0;display:grid;place-items:center;font-size:clamp(12px,2.7vw,28px);padding:0;position:relative}
+.tile.selected{outline:3px solid #ff4d9b;background:#fff2a8;z-index:2}.tile.empty{visibility:hidden;pointer-events:none}.tile:focus-visible{outline:3px solid #6448b8}
+.path-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;overflow:visible}.path-line{fill:none;stroke:#ff3691;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:8 5;filter:drop-shadow(0 1px 1px white)}
+.note{font-size:.78rem;color:#756786;text-align:center;margin:9px 0 0}.status{margin:12px auto 0;text-align:center;font-weight:800;background:#ffffffb8;padding:9px 14px;border-radius:14px;width:fit-content;max-width:100%}
+.overlay{position:fixed;inset:0;background:#2c1c3b99;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.overlay.show{display:flex}.modal{width:min(520px,100%);background:#fffafc;border:4px solid white;border-radius:24px;padding:24px;box-shadow:0 20px 60px #24112e55;max-height:90vh;overflow:auto}.modal h2{margin:0 0 10px;color:#e84e96}.modal p{line-height:1.5}#questionText{font-size:1.35rem;font-weight:800;line-height:1.5}.answer{font-size:1.15rem;line-height:1.45;padding:16px 14px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.answer{background:#f0e8ff;border:2px solid #d8c9fa;color:#44345d;padding:13px 10px;text-align:left}.answer.correct{background:#d9f8e9;border-color:#27b879}.answer.wrong{background:#ffe0e6;border-color:#ef5773}.timerbar{height:12px;background:#f3dbe8;border-radius:20px;overflow:hidden;margin:10px 0}.timerfill{height:100%;width:100%;background:linear-gradient(90deg,#37c78d,#ffd34d,#ff5c85);transition:width .2s linear}.feedback{padding:12px;border-radius:12px;background:#f5edff;margin:12px 0;display:none}.feedback.show{display:block}.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}.small{font-size:.85rem;color:#756786}.winner{font-size:1.35rem;font-weight:1000;text-align:center}
+#pauseOverlay .modal{text-align:center}
+@media(max-width:760px){.screen{padding:10px}.arena{gap:8px}.player{padding:8px;border-radius:15px}.player-head{display:block}.player-name{font-size:.92rem;margin-bottom:5px}.stat{gap:4px;font-size:.7rem}.stat span{padding:4px 6px}.board-wrap{padding:4px}.board{gap:2px}.tile{border-radius:5px}.toolbar button{font-size:.78rem;padding:8px}.brand{font-size:1.05rem}}
+@media(max-width:420px){#questionText{font-size:1.2rem}.answer{font-size:1.05rem;padding:13px 10px}.arena{grid-template-columns:1fr}.player{max-width:560px;width:100%;margin:auto}.board-wrap{max-height:390px}.tile{font-size:clamp(16px,5vw,25px)}}
+</style>
+</head>
+<body>
+<section id="menu" class="screen active">
+  <span class="floating f1">🌈</span><span class="floating f2">⭐</span><span class="floating f3">🧩</span><span class="floating f4">🍭</span>
+  <div class="hero">
+    <div class="hero-emoji">🐼 🦊 🐸 🐱</div>
+    <div class="logo">ONET<br>MATH MATCH</div>
+    <div class="subtitle">Cocokkan emoji, pecahkan soal, kumpulkan poin!</div>
+    <div class="menu-actions">
+      <button class="primary" id="playBtn">▶ BERMAIN</button>
+      <button class="secondary" id="howBtn">❔ Cara Bermain</button>
+    </div>
+    <p class="small">Matematika Kelas 1 • Bilangan 1–30 • Operasi hitung sampai 30</p>
+  </div>
+</section>
+
+<section id="game" class="screen">
+<header>
+  <div class="brand">🌟 ONET – MATH MATCH</div>
+  <div class="toolbar">
+    <button id="homeBtn">⌂ Home</button><button id="replayBtn">↻ Replay</button><button id="pauseBtn">Ⅱ Pause</button><button id="shuffleBtn">🔀 Shuffle</button>
+  </div>
+</header>
+<div class="arena">
+  <article class="player p1">
+    <div class="player-head"><div class="player-name">🌸 Pemain</div><div class="stat"><span>⭐ <b id="score1">0</b></span><span class="hearts" id="hp1">♥♥♥♥♥</span><span>🔥 <b id="streak1">0</b>/5</span></div></div>
+    <div class="board-wrap" id="wrap1"><div class="board" id="board1"></div><svg class="path-svg" id="path1" viewBox="0 0 100 100" preserveAspectRatio="none"></svg></div>
+    <div class="note">Pilih dua emoji sama yang dapat dihubungkan.</div>
+  </article>
+</div>
+<div class="status" id="globalStatus">Pilih dua emoji sama yang dapat dihubungkan.</div>
+</section>
+
+<div class="overlay" id="quizOverlay">
+ <div class="modal">
+  <h2 id="quizTitle">Kuis Matematika</h2>
+  <div class="small" id="quizMeta"></div>
+  <div class="timerbar"><div class="timerfill" id="timerFill"></div></div>
+  <div style="font-weight:900;text-align:right"><span id="timerText">25</span> detik</div>
+  <p id="questionText"></p>
+  <div class="answers" id="answerList"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="modal-actions"><button class="primary" id="continueBtn" style="display:none">Lanjutkan →</button></div>
+ </div>
+</div>
+<div class="overlay" id="pauseOverlay">
+ <div class="modal"><h2>⏸ Permainan Dijeda</h2><p>Timer dan interaksi papan dihentikan sementara.</p><button class="primary" id="resumeBtn">Lanjut Bermain</button></div>
+</div>
+<div class="overlay" id="infoOverlay">
+ <div class="modal"><h2 id="infoTitle">Cara Bermain</h2><div id="infoBody"></div><div class="modal-actions"><button class="primary" id="closeInfo">Mengerti</button></div></div>
+</div>
+<div class="overlay" id="endOverlay">
+ <div class="modal"><h2>🏁 Permainan Berakhir</h2><div class="winner" id="endMessage"></div><p id="endScores"></p><div class="modal-actions"><button class="secondary" id="endHome">Menu Utama</button><button class="primary" id="endReplay">Main Lagi</button></div></div>
+</div>
+<script>
+"use strict";
+const EMOJIS=["🐼","🦊","🐸","🐱","🐵","🐰","🐯","🐨","🐷","🐙","🦄","🐤","🐢","🐬","🦋","🐞","🍎","🍌","🍇","🍓","🍉","🍒","🥕","🌽","⭐","🌈","🍀","⚽","🎈","🍭","🍩","🚀"];
+const BANK=[
+["lambang_bilangan","Lambang bilangan dua puluh tiga adalah ....",["13","23","32","20"],1,"Dua puluh tiga ditulis dengan lambang 23."],
+["nama_bilangan","Bilangan 18 dibaca ....",["Delapan belas","Delapan puluh","Delapan","Delapan ratus"],0,"Bilangan 18 dibaca delapan belas."],
+["nilai_tempat","Pada bilangan 27, angka 2 menempati nilai tempat ....",["Satuan","Puluhan","Ratusan","Ribuan"],1,"Angka 2 bernilai 20, sehingga menempati tempat puluhan."],
+["mengurutkan","Urutan bilangan dari yang terkecil adalah ....",["12, 15, 19","19, 15, 12","15, 12, 19","12, 19, 15"],0,"12 lebih kecil dari 15 dan 15 lebih kecil dari 19."],
+["membandingkan","Tanda yang tepat untuk 24 ... 19 adalah ....",["<",">","=","+"],1,"24 lebih besar daripada 19, sehingga tandanya >."],
+["penjumlahan_piktorial","Ada 5 apel dan 3 apel. Berapa jumlah seluruh apel?",["7","8","9","10"],1,"5 + 3 = 8 apel."],
+["number_bond","Bilangan 15 terdiri dari 10 dan ....",["3","4","5","6"],2,"15 = 10 + 5."],
+["pengurangan","Ada 17 permen. Sebanyak 5 permen dimakan. Sisanya ....",["11","12","13","14"],1,"17 − 5 = 12 permen."],
+["soal_cerita","Dina memiliki 12 pensil. Ibu memberi 6 pensil lagi. Jumlah pensil Dina sekarang ....",["16","17","18","19"],2,"12 + 6 = 18 pensil."],
+["soal_cerita","Di pohon ada 18 burung. Sebanyak 7 burung terbang. Berapa burung yang tersisa?",["10","11","12","13"],3,"18 − 7 = 11 burung."],
+["lambang_bilangan","Lambang bilangan dua puluh sembilan adalah ....",["92","29","19","20"],1,"Dua puluh sembilan ditulis 29."],
+["nama_bilangan","Bilangan 14 dibaca ....",["Empat puluh","Empat belas","Satu empat","Empat"],1,"14 dibaca empat belas."],
+["lambang_bilangan","Bilangan yang dilambangkan dengan 30 adalah ....",["Tiga","Tiga belas","Tiga puluh","Tiga satu"],2,"30 dibaca tiga puluh."],
+["nilai_tempat","Pada bilangan 16, angka 6 menempati tempat ....",["Puluhan","Satuan","Ratusan","Ribuan"],1,"Angka 6 berada pada tempat satuan."],
+["nilai_tempat","Bilangan 24 terdiri atas ....",["2 satuan dan 4 puluhan","2 puluhan dan 4 satuan","24 puluhan","4 puluhan dan 2 satuan"],1,"24 terdiri atas 2 puluhan dan 4 satuan."],
+["nilai_tempat","Nilai angka 3 pada bilangan  treinta adalah ....".replace(" treinta","30"),["3","30","13","300"],1,"Pada bilangan 30, angka 3 bernilai 30."],
+["mengurutkan","Urutan naik dari 8, 3, 11 adalah ....",["11, 8, 3","3, 8, 11","8, 3, 11","3, 11, 8"],1,"Urutan naik dimulai dari bilangan terkecil: 3, 8, 11."],
+["mengurutkan","Urutan turun dari 21, 17, 25 adalah ....",["17, 21, 25","21, 25, 17","25, 21, 17","25, 17, 21"],2,"Urutan turun dari terbesar: 25, 21, 17."],
+["membandingkan","Bilangan yang lebih besar dari 18 adalah ....",["16","17","19","8"],2,"19 lebih besar daripada 18."],
+["membandingkan","Tanda yang tepat untuk 13 ... 13 adalah ....",["<",">","=","+"],2,"Kedua bilangan sama, sehingga tandanya =."],
+["penjumlahan","9 + 8 = ....",["16","17","18","19"],1,"9 ditambah 8 sama dengan 17."],
+["penjumlahan","14 + 5 = ....",["18","19","20","21"],1,"14 + 5 = 19."],
+["penjumlahan","10 + 10 = ....",["18","19","20","21"],2,"10 + 10 = 20."],
+["penjumlahan_piktorial","🍎🍎🍎🍎 + 🍎🍎🍎 = .... apel",["6","7","8","9"],1,"Ada 4 apel ditambah 3 apel, jumlahnya 7."],
+["number_bond","20 terdiri dari 13 dan ....",["5","6","7","8"],2,"20 − 13 = 7, jadi 20 = 13 + 7."],
+["number_bond","8 + .... = 15",["5","6","7","8"],2,"15 − 8 = 7."],
+["penjumlahan","11 + 9 = ....",["18","19","20","21"],2,"11 + 9 = 20."],
+["penjumlahan","7 + 13 = ....",["19","20","21","22"],1,"7 + 13 = 20."],
+["pengurangan","19 − 6 = ....",["12","13","14","15"],1,"19 dikurangi 6 sama dengan 13."],
+["pengurangan","19 − 10 = ....",["8","9","10","11"],1,"19 − 10 = 9."],
+["pengurangan","20 − 8 = ....",["10","11","12","13"],2,"20 − 8 = 12."],
+["pengurangan_piktorial","Ada 9 jeruk. 4 dimakan. Berapa yang tersisa?",["4","5","6","7"],1,"9 − 4 = 5 jeruk."],
+["number_bond","18 = 10 + ....",["6","7","8","9"],2,"18 = 10 + 8."],
+["pengurangan","22 − 7 = ....",["14","15","16","17"],1,"22 − 7 = 15."],
+["pengurangan","27 − 9 = ....",["17","18","19","20"],1,"27 − 9 = 18."],
+["soal_cerita","Budi punya 8 kelereng. Ia mendapat 7 lagi. Jumlahnya ....",["14","15","16","17"],1,"8 + 7 = 15 kelereng."],
+["soal_cerita","Ada 16 buku. Sebanyak 6 dipinjam. Buku yang tersisa ....",["8","9","10","11"],2,"16 − 6 = 10 buku."],
+["soal_cerita","Siti mengumpulkan 8 daun pada pagi hari dan 9 daun sore hari. Jumlah daun ....",["16","17","18","19"],1,"8 + 9 = 17 daun."],
+["soal_cerita","Di kolam ada 18 ikan. 5 ikan dipindahkan. Sisanya ....",["12","13","14","15"],2,"18 − 5 = 13 ikan."],
+["lambang_bilangan","Bilangan setelah 26 adalah ....",["25","27","28","29"],1,"Setelah 26 adalah 27."],
+["nama_bilangan","Bilangan 21 dibaca ....",["Dua belas","Dua puluh satu","Dua puluh","Satu dua"],1,"21 dibaca dua puluh satu."],
+["nilai_tempat","Pada bilangan 19, nilai angka 1 adalah ....",["1","9","10","19"],2,"Angka 1 pada tempat puluhan bernilai 10."],
+["mengurutkan","Bilangan yang tepat di antara 16 dan 18 adalah ....",["15","17","19","20"],1,"17 berada di antara 16 dan 18."],
+["membandingkan","Pilih pernyataan yang benar.",["12 > 20","25 < 15","17 < 19","21 = 12"],2,"17 lebih kecil daripada 19."],
+["penjumlahan","10 + 7 = ....",["16","17","18","19"],1,"10 + 7 = 17."],
+["penjumlahan","6 + 8 = ....",["12","13","14","15"],2,"6 + 8 = 14."],
+["number_bond",".... + 9 = 20",["9","10","11","12"],2,"20 − 9 = 11."],
+["pengurangan","18 − 13 = ....",["4","5","6","7"],1,"18 − 13 = 5."],
+["pengurangan","20 − 4 = ....",["14","15","16","17"],2,"20 − 4 = 16."],
+["soal_cerita","Rani memiliki 5 stiker. Ia membeli 10 lagi. Jumlahnya ....",["13","14","15","16"],2,"5 + 10 = 15 stiker."],
+["soal_cerita","Ada 20 balon. 12 balon meletus. Balon yang masih ada ....",["6","7","8","9"],2,"20 − 12 = 8 balon."]
+].map((q,i)=>({id:i+1,materi:q[0],soal:q[1],pilihan:q[2],jawaban:q[3],pembahasan:q[4]}));
+
+const $=id=>document.getElementById(id);
+let player=null,activeQuiz=null,timer=null,remaining=25,paused=false,gameEnded=false;
+const clone=o=>JSON.parse(JSON.stringify(o));
+function shuffle(arr){let a=[...arr];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function makeBoard(){
+  // 8x8 berisi 32 pasangan; tiap emoji boleh muncul lebih dari sekali.
+  let values=[];for(let i=0;i<32;i++){let e=EMOJIS[i%EMOJIS.length];values.push(e,e)}
+  values=shuffle(values);let b=[];for(let r=0;r<8;r++)b.push(values.slice(r*8,(r+1)*8));return b;
+}
+function newPlayer(id){return{id,score:0,hp:5,maxHp:5,streak:0,board:makeBoard(),selected:null,questionOrder:shuffle(BANK.map(q=>q.id)),questionIndex:0,status:"playing",answered:0,quizActive:false}}
+function startGame(){clearInterval(timer);player=newPlayer(0);activeQuiz=null;paused=false;gameEnded=false;$("menu").classList.remove("active");$("game").classList.add("active");$("endOverlay").classList.remove("show");$("pauseOverlay").classList.remove("show");render();$("globalStatus").textContent="Pilih dua emoji sama yang dapat dihubungkan."}
+function render(){if(!player)return;renderBoard(player);$("score1").textContent=player.score;$("hp1").textContent="♥".repeat(player.hp)+"♡".repeat(player.maxHp-player.hp);$("streak1").textContent=player.streak}
+function renderBoard(p){
+ const el=$("board1");el.innerHTML="";
+ p.board.forEach((row,r)=>row.forEach((v,c)=>{let btn=document.createElement("button");btn.className="tile"+(v===null?" empty":"")+(p.selected&&p.selected.r===r&&p.selected.c===c?" selected":"");btn.textContent=v??"";btn.setAttribute("aria-label",v?`Baris ${r+1}, kolom ${c+1}, ${v}`:"ubin kosong");btn.disabled=paused||gameEnded||activeQuiz!==null||v===null||p.status!=="playing";btn.addEventListener("click",()=>selectTile(p.id,r,c));el.appendChild(btn)}));
+}
+function selectTile(pid,r,c){
+ if(paused||gameEnded||activeQuiz!==null)return;let p=player;if(p.board[r][c]===null)return;
+ if(!p.selected){p.selected={r,c};renderBoard(p);return}
+ let a=p.selected,b={r,c};
+ if(a.r===b.r&&a.c===b.c){p.selected=null;renderBoard(p);return}
+ if(p.board[a.r][a.c]!==p.board[b.r][b.c]){p.selected=b;renderBoard(p);$("globalStatus").textContent="Emoji belum sama. Pilih emoji yang sama.";return}
+ const path=findPath(p.board,a,b);
+ if(!path){p.selected=null;renderBoard(p);$("globalStatus").textContent="Jalur tertutup. Coba pasangan lain atau gunakan Shuffle.";return}
+ drawPath(path);
+ p.board[a.r][a.c]=null;p.board[b.r][b.c]=null;p.selected=null;renderBoard(p);
+ setTimeout(()=>{ $("path1").innerHTML=""; if(gameEnded)return;showQuiz(p);},350);
+}
+function findPath(board,a,b){
+ // BFS pada grid dengan satu lapis kosong di luar papan; state menyimpan arah dan jumlah belokan.
+ const R=8,C=8,dirs=[[1,0],[-1,0],[0,1],[0,-1]];
+ const inside=(r,c)=>r>=0&&r<R&&c>=0&&c<C;
+ const free=(r,c)=>!inside(r,c)||board[r][c]===null;
+ let q=[{r:a.r,c:a.c,d:-1,t:0,path:[[a.r,a.c]]}],seen=new Map();
+ while(q.length){
+  let s=q.shift();if(s.r===b.r&&s.c===b.c)return s.path;
+  for(let d=0;d<4;d++){
+   let t=s.t+(s.d===-1||s.d===d?0:1);if(t>2)continue;
+   let nr=s.r+dirs[d][0],nc=s.c+dirs[d][1];
+   if(nr< -1||nr>R||nc< -1||nc>C)continue;
+   if(nr===b.r&&nc===b.c)return [...s.path,[nr,nc]];
+   if(!free(nr,nc))continue;
+   let k=`${nr},${nc},${d}`;if(seen.has(k)&&seen.get(k)<=t)continue;seen.set(k,t);
+   q.push({r:nr,c:nc,d,t,path:[...s.path,[nr,nc]]});
+  }
+ }
+ return null;
+}
+function drawPath(path){
+ const svg=$("path1");svg.innerHTML="";
+ const pts=path.map(([r,c])=>`${(c+.5)*100/8},${(r+.5)*100/8}`).join(" ");
+ const line=document.createElementNS("http://www.w3.org/2000/svg","polyline");line.setAttribute("points",pts);line.setAttribute("class","path-line");svg.appendChild(line);
+}
+function showQuiz(p){
+ if(p.questionIndex>=p.questionOrder.length)p.questionOrder=shuffle(BANK.map(q=>q.id)),p.questionIndex=0;
+ let id=p.questionOrder[p.questionIndex++],q=BANK.find(x=>x.id===id);activeQuiz={player:p,question:q,locked:false};p.quizActive=true;
+ $("quizTitle").textContent=`🌟 Kuis Matematika`;$("quizMeta").textContent=`Soal ${p.answered+1} • ${q.materi.replaceAll("_"," ")}`;$("questionText").textContent=q.soal;
+ $("feedback").className="feedback";$("feedback").textContent="";$("continueBtn").style.display="none";
+ const list=$("answerList");list.innerHTML="";
+ q.pilihan.forEach((choice,i)=>{let b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+". "+choice;b.onclick=()=>answer(i);list.appendChild(b)});
+ remaining=25;updateTimer();$("quizOverlay").classList.add("show");render();clearInterval(timer);timer=setInterval(()=>{if(paused||!activeQuiz)return;remaining--;updateTimer();if(remaining<=0)answer(-1)},1000);
+}
+function updateTimer(){$("timerText").textContent=remaining;$("timerFill").style.width=(remaining/25*100)+"%"}
+function answer(index){
+ if(!activeQuiz||activeQuiz.locked)return;activeQuiz.locked=true;clearInterval(timer);
+ const {player:p,question:q}=activeQuiz;let correct=index===q.jawaban;p.answered++;
+ processAnswer(p,correct);
+ [...$("answerList").children].forEach((b,i)=>{b.disabled=true;if(i===q.jawaban)b.classList.add("correct");if(i===index&&!correct)b.classList.add("wrong")});
+ let fb=$("feedback");fb.className="feedback show";
+ fb.innerHTML=correct?`<b style="color:#16885d">Benar! +10 poin 🎉</b><br>${q.pembahasan}`:`<b style="color:#d83e60">${index===-1?"Waktu habis!":"Belum tepat."} −5 poin, HP berkurang 1.</b><br>Jawaban: <b>${String.fromCharCode(65+q.jawaban)}. ${q.pilihan[q.jawaban]}</b><br>${q.pembahasan}`;
+ if(correct&&p.streak===0&&p.hp<p.maxHp)fb.innerHTML+="<br><b>Bonus streak tercapai! HP +1.</b>";
+ $("continueBtn").style.display="inline-block";render();
+}
+function processAnswer(p,correct){
+ if(correct){p.score+=10;p.streak++;if(p.streak>=5){p.hp=Math.min(p.maxHp,p.hp+1);p.streak=0;}}
+ else{p.score-=5;p.hp=Math.max(0,p.hp-1);p.streak=0}
+ if(p.hp===0){p.status="gameover";p.isGameOver=true}
+}
+$("continueBtn").onclick=()=>{
+ if(!activeQuiz)return;let p=activeQuiz.player;p.quizActive=false;$("quizOverlay").classList.remove("show");activeQuiz=null;
+ if(p.hp<=0){endGame("HP habis.");return}
+ if(isBoardBlocked(p.board)){endGame("Papan tidak memiliki pasangan yang dapat dicocokkan.");return}
+ $("globalStatus").textContent="Lanjutkan mencocokkan emoji dan menjawab soal.";render();
+};
+function isBoardBlocked(board){
+ let tiles=[];board.forEach((row,r)=>row.forEach((v,c)=>{if(v!==null)tiles.push({r,c,v})}));
+ if(!tiles.length)return true;
+ for(let i=0;i<tiles.length;i++)for(let j=i+1;j<tiles.length;j++)if(tiles[i].v===tiles[j].v&&findPath(board,tiles[i],tiles[j]))return false;
+ return true;
+}
+function endGame(reason){
+ gameEnded=true;clearInterval(timer);$("quizOverlay").classList.remove("show");$("pauseOverlay").classList.remove("show");
+ let msg=reason;
+ $("endMessage").textContent=msg;$("endScores").textContent=`Skor akhir: ${player?player.score:0} poin`;
+ $("endOverlay").classList.add("show");render();
+}
+function shuffleBoard(){
+ if(gameEnded||activeQuiz||paused)return;
+ let p=player;let tiles=p.board.flat().filter(x=>x!==null);tiles=shuffle(tiles);let i=0;p.board=p.board.map(row=>row.map(v=>v===null?null:tiles[i++]));p.selected=null;
+ render();$("globalStatus").textContent="Papan diacak. Skor, HP, dan soal tidak berubah.";
+}
+function pause(){if(gameEnded||activeQuiz)return;paused=true;$("pauseOverlay").classList.add("show");render()}
+function resume(){paused=false;$("pauseOverlay").classList.remove("show");render()}
+function home(){clearInterval(timer);activeQuiz=null;paused=false;gameEnded=false;$("quizOverlay").classList.remove("show");$("pauseOverlay").classList.remove("show");$("endOverlay").classList.remove("show");$("game").classList.remove("active");$("menu").classList.add("active")}
+$("playBtn").onclick=startGame;$("replayBtn").onclick=startGame;$("shuffleBtn").onclick=shuffleBoard;$("pauseBtn").onclick=pause;$("resumeBtn").onclick=resume;$("homeBtn").onclick=home;$("endHome").onclick=home;$("endReplay").onclick=startGame;
+$("howBtn").onclick=()=>{$("infoTitle").textContent="Cara Bermain";$("infoBody").innerHTML="<ol><li>Pilih dua ubin dengan emoji yang sama.</li><li>Keduanya harus dapat dihubungkan melalui jalur dengan maksimal dua belokan. Jalur boleh melewati bagian luar papan.</li><li>Jika cocok, kedua ubin hilang dan kuis muncul untuk pemain tersebut.</li><li>Jawaban benar mendapat +10 poin. Jawaban salah atau waktu habis mendapat −5 poin dan kehilangan 1 HP.</li><li>Setiap 5 jawaban benar berturut-turut memberi +1 HP (maksimal 5 HP).</li><li>Gunakan Shuffle untuk mengacak posisi ubin yang tersisa. Home, Replay, dan Pause tersedia di bilah atas.</li></ol><p><b>Catatan:</b> permainan dimainkan oleh satu pemain pada satu papan. Game berakhir jika HP pemain habis atau papan pemain tidak memiliki pasangan valid.</p>";$("infoOverlay").classList.add("show")};
+$("closeInfo").onclick=()=>$("infoOverlay").classList.remove("show");
+</script>
+</body>
+</html>
